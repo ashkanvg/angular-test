@@ -32,6 +32,11 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { LoginComponent } from './login/login.component';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms'; 
+
 
 @NgModule({
   declarations: [
@@ -51,11 +56,15 @@ import { LoginComponent } from './login/login.component';
   	BrowserAnimationsModule,
   	MatToolbarModule,
   	FlexLayoutModule,
+    MatFormFieldModule, 
+    MatInputModule,
+    MatCheckboxModule,
     MatListModule,
     MatGridListModule,
     MatCardModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    FormsModule
   ],
   entryComponents: [
     LoginComponent
