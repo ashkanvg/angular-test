@@ -32,10 +32,16 @@ import { AppRoutingModule } from './app-routing/app-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { LoginComponent } from './login/login.component';
 
+import { FormsModule } from '@angular/forms'; 
+import { ReactiveFormsModule } from '@angular/forms';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormsModule } from '@angular/forms'; 
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
+
 
 @NgModule({
   declarations: [
@@ -58,12 +64,16 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule, 
     MatInputModule,
     MatCheckboxModule,
+    MatSelectModule,
+    MatSlideToggleModule,
     MatListModule,
     MatGridListModule,
     MatCardModule,
     MatButtonModule,
     MatDialogModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
+
   ],
   entryComponents: [
     LoginComponent
