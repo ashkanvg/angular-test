@@ -1,4 +1,4 @@
-import { Component, OnInit , Input ,ViewChild } from '@angular/core';
+import { Component, OnInit , Input ,ViewChild, Inject} from '@angular/core';
 import { Dish } from '../shared/dish';
 import { DishService } from '../services/dish.service';
 import { Params, ActivatedRoute } from '@angular/router';
@@ -7,6 +7,11 @@ import { switchMap } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
 import { Comment } from '../shared/comment';
+
+import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { baseURL } from '../shared/baseurl';
+
 
 @Component({
   selector: 'app-dishdetail',
@@ -18,12 +23,14 @@ export class DishdetailComponent implements OnInit {
 	dishIds: string[];
 	prev: string;
 	next: string;
+	errMess: string;
 
 	/*for validation*/
 	feedbackForm: FormGroup;
 	feedback: Feedback;
 	contactType = ContactType;
   	comment: Comment;
+  dishcopy: Dish;
 
 	formErrors = {
 		author: '',
@@ -46,20 +53,20 @@ export class DishdetailComponent implements OnInit {
 	constructor(private dishservice:DishService,
 	  	private route: ActivatedRoute,
 		private location: Location,
-		private fb:FormBuilder) { 
-    		this.createForm();
-	}
+		private fb:FormBuilder,
+		@Inject('baseURL') private baseURL) { }
   /*ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
     this.dishservice.getDish(id)
       .subscribe(dish => this.dish = dish);
   }*/
 	ngOnInit() {
+		  this.createForm();
 		//dar asle b ja in k copy kne to y moteqayer jadid b esm dishIds, miad subscribe mikone tosh
 	    this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
 	    //in code paeen dre mge harmoqe id avaz shd khod josh getDishIds ro dobre ejra kn
 	    this.route.params.pipe(switchMap((params: Params) => this.dishservice.getDish(params['id'])))
-	    .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); });
+	    .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id); },errmess => this.errMess = <any>errmess);
 	}
 	setPrevNext(dishId: string) {
 	    const index = this.dishIds.indexOf(dishId);
@@ -85,7 +92,12 @@ export class DishdetailComponent implements OnInit {
 		onSubmit() {
 			this.feedback = this.feedbackForm.value;
 		    console.log(this.feedback);
-			this.dish.comments.push(this.feedbackForm.value);
+			this.dishcopy.comments.push(this.feedbackForm.value);
+			this.dishservice.putDish(this.dishcopy)
+		      .subscribe(dish => {
+		        this.dish = dish; this.dishcopy = dish;
+		      },
+		      errmess => { this.dish = null; this.dishcopy = null; this.errMess = <any>errmess; });
 			this.feedbackForm.reset({
 			      rating: 5,
 			      comment: '',

@@ -25,7 +25,7 @@ import { ContactComponent } from './contact/contact.component';
 import { DishService } from './services/dish.service';
 import { PromotionService } from './services/promotion.service';
 import { LeaderService } from './services/leader.service';
-
+import { ProcessHTTPMsgService } from './services/process-httpmsg.service';
 
 import { AppRoutingModule } from './app-routing/app-routing.module';
 
@@ -43,6 +43,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSliderModule } from '@angular/material/slider';
 
+import { baseURL } from './shared/baseurl';
+import { HttpClientModule } from '@angular/common/http';
+import { InjectionToken } from '@angular/core';
+import { HighlightDirective } from './directives/highlight.directive';
+
 
 
 
@@ -56,7 +61,8 @@ import { MatSliderModule } from '@angular/material/slider';
     HomeComponent,
     AboutComponent,
     ContactComponent,
-    LoginComponent
+    LoginComponent,
+    HighlightDirective
   ],
   imports: [
     BrowserModule,
@@ -77,15 +83,18 @@ import { MatSliderModule } from '@angular/material/slider';
     MatDialogModule,
     FormsModule,
     ReactiveFormsModule,
-    MatSliderModule
+    MatSliderModule,
+    HttpClientModule
   ],
   entryComponents: [
     LoginComponent
   ],
   providers: [
+    {provide: 'baseURL', useValue: baseURL},
     DishService,
     PromotionService,
     LeaderService,
+    ProcessHTTPMsgService,
   ],
   bootstrap: [AppComponent]
 })
