@@ -49,8 +49,6 @@ import { InjectionToken } from '@angular/core';
 import { HighlightDirective } from './directives/highlight.directive';
 
 
-
-
 @NgModule({
   declarations: [
     AppComponent,
