@@ -6,13 +6,18 @@ import { LEADERS } from '../shared/leaders';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
+import { map, catchError } from 'rxjs/operators';
+import { HttpClient,HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { baseURL } from '../shared/baseurl';
+import { ProcessHTTPMsgService } from './process-httpmsg.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class LeaderService {
 
-  constructor() { }
+  constructor(private http: HttpClient,private processHTTPMsgService: ProcessHTTPMsgService) { }
   /* --PROMISE:------------------------------
   getLeaders(): Promise<Leader[]>{
   	//return Promise.resolve(LEADERS);
@@ -36,7 +41,6 @@ export class LeaderService {
         setTimeout(() => resolve(LEADERS.filter((leader) => leader.featured)[0]), 2000);
     });
   }
-	*/
   getLeaders(): Observable<Leader[]> {
     return of(LEADERS).pipe(delay(2000));
   }
@@ -48,4 +52,36 @@ export class LeaderService {
   getFeaturedLeader(): Observable<Leader> {
     return of(LEADERS.filter((leader) => leader.featured)[0]).pipe(delay(2000));
   }
+  */
+
+  getLeaders(): Observable<Leader[]> {
+    return this.http.get<Leader[]>(baseURL + 'leadership')
+      .pipe(catchError(this.processHTTPMsgService.handleError));
+  }
+
+  getLeader(id: number): Observable<Leader> {
+    return this.http.get<Leader>(baseURL + 'leadership/' + id)
+      .pipe(catchError(this.processHTTPMsgService.handleError));
+  }
+
+  getFeaturedLeader(): Observable<Leader> {
+    return this.http.get<Leader[]>(baseURL + 'leadership?featured=true').pipe(map(leaders => leaders[0]))
+      .pipe(catchError(this.processHTTPMsgService.handleError));
+  }
+
+  getLeaderIds(): Observable<number[] | any> {
+    return this.getLeaders().pipe(map(leaders => leaders.map(leader => leader.id)))
+      .pipe(catchError(error => error));
+  }
+  putLeader(leader: Leader): Observable<Leader> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
+    return this.http.put<Leader>(baseURL + 'leadership/' + leader.id, leader, httpOptions)
+      .pipe(catchError(this.processHTTPMsgService.handleError));
+
+  }
+
 }

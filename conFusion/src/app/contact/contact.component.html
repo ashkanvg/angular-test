@@ -81,4 +81,24 @@
       <button type="submit" mat-button class="background-primary text-floral-white">Submit</button>
     </form>
   </div>
+  <div fxFlex fxFlexOffset="20px" class="form-size">
+    <h3>Send us your Feedback</h3>
+    <div>
+      <div fxFlex="40" *ngIf="feedbackCopy">
+        <mat-card>
+          <h3>Your Submission</h3>
+          <p matline>First Name: {{feedbackCopy.firstname}}</p>
+          <p matline>Last Name: {{feedbackCopy.lastname}}</p>
+          <p matline>Tel. Number: {{feedbackCopy.telnum}}</p>
+          <p matline>Email: {{feedbackCopy.email}}</p>
+          <p matline>Contact You?: {{feedbackCopy.agree}}</p>
+          <p matline>How?: {{feedbackCopy.contacttype}}</p>
+          <p matline>Feedback: {{feedbackCopy.message}}</p>
+        </mat-card>
+      </div>
+    </div>
+    <div [hidden]="spinner">
+      <h3>Submitting Form</h3>
+      <mat-spinner></mat-spinner> <h4>Loading . . . Please Wait</h4>
+    </div>
 </div>

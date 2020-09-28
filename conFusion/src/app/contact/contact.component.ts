@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
 
 import { flyInOut, expand } from '../animations/app.animation';
-
+import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { baseURL } from '../shared/baseurl';
+import { FeadbackService } from '../services/feadback.service';
 
 @Component({
 	selector: 'app-contact',
@@ -22,9 +25,13 @@ export class ContactComponent implements OnInit {
 	feedbackForm: FormGroup;
 	feedback: Feedback;
 	contactType = ContactType;
+	feedbackCopy: Feedback;
+	errMess: string;
+  	spinner: boolean;
+
 
 	@ViewChild('fform') feedbackFormDirective;
-  	constructor(private fb:FormBuilder) { 
+  	constructor(private fb:FormBuilder,private feadbackService:FeadbackService) { 
     	this.createForm();
   	}
 
@@ -74,8 +81,17 @@ export class ContactComponent implements OnInit {
     	this.onValueChanged(); // (re)set validation messages now
   	}
     onSubmit() {
-	    this.feedback = this.feedbackForm.value;
+    	this.spinner = false;
+
+		this.feedback = this.feedbackForm.value;
 	    console.log(this.feedback);
+	    //this.feedbackCopy.comments.push(this.feedbackForm.value);
+		this.feadbackService.submitFeedback(this.feedback)
+	      .subscribe(feedback => {
+	        this.feedback = feedback;
+	        this.feedbackCopy = feedback;
+	        this.spinner = true;
+	    });
 		this.feedbackForm.reset({
 		      firstname: '',
 		      lastname: '',
@@ -87,7 +103,15 @@ export class ContactComponent implements OnInit {
 		    });  
 		this.feedbackFormDirective.resetForm(); //ensure back and reset to first of the form
 
+		 setTimeout (() => {this.spinnerOff()}, 5000);
 	}
+
+	spinnerOff()
+	  {
+
+	    this.feedbackCopy = null;
+	    this.spinner = true;
+	  }
 
 	onValueChanged(data?: any) {
 	    if (!this.feedbackForm) { return; }
